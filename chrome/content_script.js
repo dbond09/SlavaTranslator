@@ -455,7 +455,9 @@
 
     }
 
-    $(document).ready(mark_words)
+    $(document).ready(mark_words);
+    var observer = new MutationObserver(function() {if (jQuery.isReady) {mark_words()} else {$(document).ready(mark_words)};});
+    observer.observe(document, { characterData: true, subtree: true, attributes: true });
 
     $("body").on("mouseenter", ".slava-pop", slava_mouseenter);
     $("body").on("mouseleave", ".slava-pop", slava_mouseleave);
