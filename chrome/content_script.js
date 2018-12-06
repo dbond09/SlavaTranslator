@@ -456,7 +456,22 @@
     }
 
     $(document).ready(mark_words);
-    var observer = new MutationObserver(function() {if (jQuery.isReady) {mark_words()} else {$(document).ready(mark_words)};});
+    var lastMark = new Date().getTime();
+    var markWaiting = false;
+    var observer = new MutationObserver(function() {
+      var diff = new Date().getTime() - lastMark;
+      if (diff < 200 && markWaiting) {return;} //set refresh interval to 200 ms
+      else if (diff < 200) {
+        markWaiting = true;
+        window.setTimeout(function(){
+          mark_words();
+          markWaiting=false;
+          lastMark = new Date().getTime();
+        }, 200-diff);
+        return;
+      }
+      mark_words();
+    });
     observer.observe(document, { characterData: true, subtree: true, attributes: true });
 
     $("body").on("mouseenter", ".slava-pop", slava_mouseenter);
